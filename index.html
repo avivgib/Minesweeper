@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Minesweeper</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body onload="onInit()">
+
+    <h1>Minesweeper</h1>
+
+    <table>
+        <tbody class="board"></tbody>
+    </table>
+
+    <div class="difficulty-container">
+        <h2>Difficulty</h2>
+        <button onclick="onChangeDifficulty(this)" class="btn Difficulty">Beginner</button>
+        <button onclick="onChangeDifficulty(this)" class="btn Difficulty">Medium</button>
+        <button onclick="onChangeDifficulty(this)" class="btn Difficulty">Expert</button>
+
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/utils.js"></script>
+</body>
+
+</html>
