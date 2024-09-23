@@ -2,6 +2,12 @@
 
 const FLAG_IMG = '<img class="flag" src="img/flag.png">'
 const MINE_IMG = '<img class="mine" src="img/mine.png">'
+const TIMER_INTERVAL = 31
+const INITIAL_TIMER_TEXT = '00:00.000'
+
+var gBestTime = '99:99.999'
+var gTimerIntrval // holds the interval
+var gStartTime // holds the start timer
 
 var gBoard
 var gLevel = {
@@ -9,15 +15,33 @@ var gLevel = {
     MINES: 2
 }
 var gGame = {
+    isFirstStep: true,
     isOn: false,
     showCount: 0,
-    markedCount: 0,
+    markedCount: gLevel.MINES,
     secsPassed: 0
 }
 
 function onInit() {
+    resetTimer()
     gBoard = buildBoard()
     renderBoard()
+    resetData()
+}
+
+function resetTimer() {
+    clearInterval(gTimerIntrval)
+    var elTimer = document.querySelector('.timer')
+    elTimer.innerText = INITIAL_TIMER_TEXT
+}
+
+function resetData() {
+    gGame.isFirstStep = true
+    gGame.markedCount = gLevel.MINES
+    gGame.showCount = 0
+    document.querySelector('.marked').innerText = gGame.markedCount
+    document.querySelector('.exposed').innerText = gGame.showCount
+    document.querySelector('.res-msg').innerText = ''
 }
 
 function buildBoard() {
@@ -71,6 +95,7 @@ function getClassName(location) {
 // Right Click Handler
 function onCellMarked(ev, elCell, i, j) {
     ev.preventDefault()
+    if (!gGame.isOn) return
     if (gBoard[i][j].isShown) return
 
     if (!gBoard[i][j].isMarked) {
@@ -80,20 +105,93 @@ function onCellMarked(ev, elCell, i, j) {
         gBoard[i][j].isMarked = false
         elCell.innerHTML = " "
     }
+
+    gGame.markedCount--
+    document.querySelector('.marked').innerText = gGame.markedCount
 }
 
 function onCellClicked(elCell, i, j) {
-    if (!gGame.isOn) {
+    if (gGame.isFirstStep) {
+        startTimer()
+        gGame.isFirstStep = false
         gGame.isOn = true
         buildMines(i, j)
         setMinesNegsCount()
     }
 
+    if (!gGame.isOn) return
+
+    if (gBoard[i][j].isMarked) return
+
+    // showElements()
     var currCell = gBoard[i][j]
     var elementToShow = currCell.minesAroundCount
-    if (currCell.isMine) elementToShow = MINE_IMG
+
+    if (currCell.isMine) {
+        document.querySelector('.res-msg').innerText = 'YOU LOSE!'
+        clearInterval(gTimerIntrval)
+        elementToShow = MINE_IMG
+        gGame.isOn = false
+    } else if (gGame.showCount === (gLevel.SIZE ** 2) - gLevel.MINES - 1) {
+        document.querySelector('.res-msg').innerText = 'YOU WIN!'
+        clearInterval(gTimerIntrval)
+        updateBestTime()
+        gGame.isOn = false
+        gGame.showCount++
+    } else {
+        gGame.showCount++
+    }
 
     elCell.innerHTML = elementToShow
+    elCell.classList.add('selected')
+    document.querySelector('.exposed').innerText = gGame.showCount
+}
+
+function updateBestTime() {
+    var elTime = document.querySelector('.timer')
+    const newTime = parseTime(elTime.innerText)
+    const prevBestTime = parseTime(gBestTime)
+
+    if(newTime < prevBestTime) {
+        gBestTime = newTime.innerText
+        document.querySelector('.best-time').innerText = formatTime(newTime)
+    }
+}
+
+function parseTime(timerStr) {
+    const splitTime = timerStr.split('.') 
+    const ms = splitTime[1] 
+    const seconds = splitTime[0].split(':')[1]
+    const minutes = splitTime[0].split(':')[0]
+
+    return (minutes * 60000) + (seconds * 1000) + (Number(ms))
+}
+
+function startTimer() {
+    gStartTime = Date.now()
+    gTimerIntrval = setInterval(updateTimer, TIMER_INTERVAL);
+}
+
+function updateTimer() {
+    const delta = Date.now() - gStartTime
+    const elTimer = document.querySelector('.timer')
+    elTimer.innerText = formatTime(delta)
+}
+
+function formatTime(ms) {
+    var minutes = Math.floor(ms / 60000);
+    var seconds = Math.floor((ms % 60000) / 1000);
+    var milliseconds = ms % 1000
+
+    return `${padTime(minutes)}:${padTime(seconds)}.${padMiliseconds(milliseconds)}`
+}
+
+function padTime(val) {
+    return String(val).padStart(2, '0')
+}
+
+function padMiliseconds(ms) {
+    return String(ms).padStart(3, '0')
 }
 
 function buildMines(i, j) {
@@ -161,6 +259,27 @@ function onChangeDifficulty(elBtn) {
         gLevel.MINES = 32
     }
 
+    var elBestTime = document.querySelector('.best-time')
+    elBestTime.innerText = '00:00.000'
+    gBestTime = '99:99.999'
     gGame.isOn = false
     onInit()
+}
+
+function restartGame() {
+    onInit()
+}
+
+function checkGameOver(currCell, elCell) {
+    if (currCell.isMine) {
+        elCell.innerHTML = MINE_IMG
+        gGame.isOn = false
+        return true
+    }
+    if (gGame.showCount > 0 && !gGame.isOn) {
+        gGame.isOn = false
+        return true
+    }
+
+    return false
 }

@@ -1,3 +1,13 @@
+body {
+    background-image: url('/img/background1.png');
+    margin: 0 auto;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center; 
+    background-size: cover;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
 img.flag {
     width: 45%;
 }
@@ -10,9 +20,32 @@ h1 {
     text-align: center;
 }
 
+/* .card-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    width: max-content;
+    height: inherit;
+    background-color: rgb(39, 114, 243);
+    margin: auto;
+} */
+
+
+.timer-container {
+    display: table;
+    margin: 0 auto;
+}
+
 table {
     border-collapse: collapse;
     margin: 0 auto;
+}
+
+.states-container {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+    text-align: center;
 }
 
 table td {
@@ -21,17 +54,57 @@ table td {
     font-size: 24px;
     text-align: center;
     background-color: #a09e9d;
-    color: white;
-    border: 2px solid #fff;
+    color: rgb(16, 10, 10);
+    border: 2px solid #180a0a;
     cursor: pointer;
+
 }
 
 td.selected {
-    background-color: lightsalmon;
+    background-color: white;
     font-style: italic;
     color: darkslategray;
+    opacity: .5;
+}
+
+.res-msg {
+    text-align: center;
+}
+
+.restart {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
 }
 
 .difficulty-container {
     text-align: center;
+}
+
+.btn {
+    box-shadow: inset 0px 1px 0px 0px #fce2c1;
+    background: linear-gradient(to bottom, #f7f6f4 5%, #040301 100%);
+    background-color: #ffc477;
+    border-radius: 11px;
+    border: 2px solid #c5c5c5;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-family: Arial;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px 18px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #cc9f52;
+}
+
+.btn:hover {
+    background: linear-gradient(to bottom, #0b0b0a 5%, #ebe9e6 100%);
+    background-color: #151311;
+    opacity: 0.5;
+}
+
+.btn:active {
+    position: relative;
+    top: 1px;
 }
