@@ -9,7 +9,7 @@ body {
 }
 
 img.flag {
-    width: 45%;
+    width: 60%;
 }
 
 img.mine {
@@ -26,8 +26,21 @@ h1 {
     padding: 10px;
     width: max-content;
     height: inherit;
-    background-color: rgb(39, 114, 243);
+    background-color: rgb(74, 77, 83);
     margin: auto;
+
+    
+    box-shadow: inset 0px 1px 0px 0px #fce2c1;
+    background: linear-gradient(to bottom, #f7f6f4 5%, #040301 100%);
+    border-radius: 11px;
+    border: 2px solid #c5c5c5;
+    cursor: pointer;
+    color: #010101;
+    font-family: Arial;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px 18px;
+    text-decoration: none;
 } */
 
 
@@ -39,7 +52,24 @@ h1 {
 table {
     border-collapse: collapse;
     margin: 0 auto;
+    border-radius: 10px;
 }
+
+table td {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    text-align: center;
+    background-color: #a09e9d;
+    color: rgb(16, 10, 10);
+    border: 2px solid #180a0a;
+    cursor: pointer;   
+}
+
+tr:first-child td:first-child { border-top-left-radius: 10px; }
+tr:first-child td:last-child { border-top-right-radius: 10px; }
+tr:last-child td:first-child { border-bottom-left-radius: 10px; }
+tr:last-child td:last-child { border-bottom-right-radius: 10px; }
 
 .states-container {
     margin: auto;
@@ -48,23 +78,11 @@ table {
     text-align: center;
 }
 
-table td {
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-    text-align: center;
-    background-color: #a09e9d;
-    color: rgb(16, 10, 10);
-    border: 2px solid #180a0a;
-    cursor: pointer;
-
-}
-
 td.selected {
     background-color: white;
     font-style: italic;
     color: darkslategray;
-    opacity: .5;
+    opacity: 0.85;
 }
 
 .res-msg {
@@ -75,33 +93,36 @@ td.selected {
     display: block;
     margin: 0 auto;
     text-align: center;
+    cursor: pointer;
 }
 
 .difficulty-container {
     text-align: center;
+    color: black;
 }
 
 .btn {
+    height:35px;
+    width:100px;
     box-shadow: inset 0px 1px 0px 0px #fce2c1;
-    background: linear-gradient(to bottom, #f7f6f4 5%, #040301 100%);
-    background-color: #ffc477;
+    background: linear-gradient(to bottom, #f7f6f4 5%, #403f3c 100%);
     border-radius: 11px;
     border: 2px solid #c5c5c5;
     display: inline-block;
     cursor: pointer;
-    color: #ffffff;
+    color: #010101;
     font-family: Arial;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     padding: 8px 18px;
     text-decoration: none;
-    text-shadow: 0px 1px 0px #cc9f52;
+    /* text-shadow: 0px 1px 0px #d7de54; */
 }
 
 .btn:hover {
-    background: linear-gradient(to bottom, #0b0b0a 5%, #ebe9e6 100%);
+    background: linear-gradient(to bottom, #403f3c 5%, #ebe9e6 100%);
     background-color: #151311;
-    opacity: 0.5;
+    /* opacity: 0.5; */
 }
 
 .btn:active {

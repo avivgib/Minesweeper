@@ -14,9 +14,10 @@
     <h1>Minesweeper - Aviv Gibli</h1>
     <div class="card-container">
         <div class="timer-container">
-            <span> Best Time: <span class="best-time">00:00.000</span></span>
+            <span> Best Time: <span class="best-time">000</span></span>
             <br>
-            <span> Timer: <span class="timer">00:00.000</span></span><br>
+            <span> Timer: <span class="timer">000</span></span><br>
+            <span> Lives: <span class="lives"></span></span><br>
             <hr>
         </div>
 
@@ -24,28 +25,28 @@
             <span>Marked <span class="marked"></span></span>
             &emsp;
             <span>Showed <span class="exposed"></span></span>
+            <br>
+            <span class="restart" onclick="restartGame()">😃</span>
+            <div class="res-msg"></div>
         </div>
 
         <table>
             <tbody class="board"></tbody>
         </table>
 
-        <br>
-        <div class="res-msg"></div>
-
-        <br>
-
         <div class="difficulty-container">
-            <button class="btn restart" onclick="restartGame()">Restart</button>
-
             <h2>Difficulty</h2>
             <button onclick="onChangeDifficulty(this)" class="btn Difficulty">Beginner</button>
             <button onclick="onChangeDifficulty(this)" class="btn Difficulty">Medium</button>
             <button onclick="onChangeDifficulty(this)" class="btn Difficulty">Expert</button>
         </div>
     </div>
-    <script src="js/main.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/board.js"></script>
+    <script src="js/mines.js"></script>
+    <script src="js/timer.js"></script>
     <script src="js/utils.js"></script>
 </body>
 
 </html>
+
