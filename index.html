@@ -12,27 +12,43 @@
 <body onload="onInit()">
 
     <h1>Minesweeper - Aviv Gibli</h1>
-    <div class="card-container">
+    <div class="container">
+        <div class="modes-container">
+            <div>
+                <input id="light-mode" class="light" onclick="changeMode(this)" type="radio" checked />
+                <label for="light-mode">Light</label>
+
+                <input id="dark-mode" class="dark" onclick="changeMode(this)" type="radio" />
+                <label for="dark-mode">Dark</label>
+            </div>
+        </div>
+
         <div class="timer-container">
-            <span> Best Time: <span class="best-time">000</span></span>
-            <br>
+            <span> Best Time: <span class="best-time">000</span></span><br>
             <span> Timer: <span class="timer">000</span></span><br>
             <span> Lives: <span class="lives"></span></span><br>
             <hr>
         </div>
 
         <div class="states-container">
-            <span>Marked <span class="marked"></span></span>
-            &emsp;
-            <span>Showed <span class="exposed"></span></span>
-            <br>
-            <span class="restart" onclick="restartGame()">😃</span>
+            <span>Marked <span class="marked"></span></span>&emsp;
+            <span>Showed <span class="exposed"></span></span><br>
+            <span title="restart" class="restart" onclick="restartGame()">😃</span>
             <div class="res-msg"></div>
         </div>
 
         <table>
             <tbody class="board"></tbody>
         </table>
+        <br>
+
+            <div class="hints"></div>
+            <br>
+            <div class="safe-container">    
+                <button onclick="markSafeCell()" class="safe-btn">Safe Click</button>
+                <span>3 clicks available</span>
+            </div>
+
 
         <div class="difficulty-container">
             <h2>Difficulty</h2>
@@ -46,7 +62,7 @@
     <script src="js/mines.js"></script>
     <script src="js/timer.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/modes.js"></script>
 </body>
 
 </html>
-

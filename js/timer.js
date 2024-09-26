@@ -2,6 +2,7 @@ function resetTimer() {
     clearInterval(gTimerIntrval)
     var elTimer = document.querySelector('.timer')
     elTimer.innerText = INITIAL_TIMER_TEXT
+    gGame.secsPassed = 0
 }
 
 function startTimer() {
@@ -11,6 +12,8 @@ function startTimer() {
 
 function updateTimer() {
     const delta = Date.now() - gStartTime
+    const secondsPassed = Math.floor(delta / 1000)
+    gGame.secsPassed = secondsPassed
     const elTimer = document.querySelector('.timer')
     elTimer.innerText = formatTime(delta)
 }
@@ -25,11 +28,9 @@ function padTime(val) {
 }
 
 function updateBestTime() {
-    var elTime = document.querySelector('.timer')
-    const newTime = elTime.innerText
-
-    if (newTime < gBestTime) {
-        gBestTime = String(newTime)
-        document.querySelector('.best-time').innerText = newTime
+    const currBetTime = Number(gBestTime)
+    if (gGame.secsPassed < currBetTime || isNaN(currBetTime)) {
+        gBestTime = formatTime(gGame.secsPassed * 1000)
+        document.querySelector('.best-time').innerText = gBestTime
     }
 }
