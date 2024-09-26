@@ -1,5 +1,5 @@
 body {
-    background-image: url('/img/background1.png');
+    background-image: url('img/background1.png');
     margin: 0 auto;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -10,7 +10,7 @@ body {
 }
 
 body.dark-mode {
-    background-image: url('/img/dark-mode.jpg');
+    background-image: url('img/dark-mode.jpg');
     color: white;
 }
 
