@@ -3,6 +3,7 @@
 const FLAG_IMG = '<img class="flag" src="img/flag.png">'
 const MINE_IMG = '<img class="mine" src="img/mine.png">'
 const HINT_IMG = '<img class="hint" onclick="onUseHint(this)" src="img/hint.png">'
+const MINE_DETECTOR_IMG = '<img class="exterminator" onclick="removeMines(this)" src="img/metal-detector.png">'
 const TIMER_INTERVAL = 1000
 const INITIAL_TIMER_TEXT = '000'
 
@@ -23,9 +24,8 @@ var gGame = {
     secsPassed: 0,
 
     isFirstStep: true,
-    livesCount: 3,
-    hints: 3,
-    safeClicks: 3,
+    hints: 0,
+    safeClicks: 1,
     isHintStatus: false
 }
 
@@ -43,27 +43,37 @@ function resetData() {
     gGame.isHintStatus = false
     gGame.markedCount = gLevel.MINES
     gGame.showCount = 0
-    gGame.livesCount = gLevel.LIVES
-    gGame.safeClicks = 3
-    
-    // LIVES
-    var livesStr = '💝'
-    for (var i = 1; i < gLevel.LIVES; i++) {
-        livesStr += '💝'
-    }
 
     // DOM
-    document.querySelector('.lives').innerText = livesStr
+    document.querySelector('.safe-container span').innerText = `${gGame.safeClicks} clicks available`
     document.querySelector('.marked').innerText = gGame.markedCount
     document.querySelector('.exposed').innerText = gGame.showCount
     document.querySelector('.restart').innerText = '😁'
     document.querySelector('.res-msg').innerText = ''
-    
+
+    // LIVES
+    var elLives = document.querySelector('.lives')
+    elLives.innerHTML = ''
+    for (var i = 0; i < gLevel.LIVES; i++) {
+        elLives.innerHTML += '💝'
+    }
+
     // HINTS
-    var hintsContainer = document.querySelector('.hints')
-    hintsContainer.innerHTML = ''
-    for (var i = 0; i < 3; i++) {
-        hintsContainer.innerHTML += HINT_IMG
+    var elHintsContainer = document.querySelector('.hints')
+    elHintsContainer.innerHTML = ''
+    for (var i = 0; i < gGame.hints; i++) {
+        elHintsContainer.innerHTML += HINT_IMG
+    }
+
+    // MINE-DETECTOR
+    var elMineDetectorContainer = document.querySelector('.mine-detector-container')
+    var elMineDetector = document.querySelector('.exterminator')
+
+    elMineDetectorContainer.classList.add('hidden')
+
+    if (gLevel.SIZE > 4) {
+        elMineDetectorContainer.classList.remove('hidden')
+        elMineDetector.innerHTML = MINE_DETECTOR_IMG
     }
 }
 
@@ -146,8 +156,8 @@ function checkGameOver(elCell, i, j) {
 
     // Mine - Game Over - Lose
     if (currCell.isMine) {
-        if (gGame.livesCount > 0) {
-            gGame.livesCount--
+        if (gLevel.LIVES > 0) {
+            gLevel.LIVES--
 
             var elLives = document.querySelector('.lives').innerText
             var livesCount = elLives.replace('💝', '');
@@ -183,16 +193,25 @@ function onChangeDifficulty(elBtn) {
         gLevel.SIZE = 4
         gLevel.MINES = 2
         gLevel.LIVES = 1
+
+        gGame.hints = 0
+        gGame.safeClicks = 1
     }
     else if (elBtn.innerText === 'Medium') {
         gLevel.SIZE = 8
         gLevel.MINES = 14
         gLevel.LIVES = 2
+
+        gGame.hints = 2
+        gGame.safeClicks = 2
     }
     else if (elBtn.innerText === 'Expert') {
         gLevel.SIZE = 12
         gLevel.MINES = 32
         gLevel.LIVES = 3
+
+        gGame.hints = 3
+        gGame.safeClicks = 3
     }
 
 
@@ -202,13 +221,16 @@ function onChangeDifficulty(elBtn) {
 }
 
 function restartGame() {
-    onInit()
+    var elRestart = document.querySelector('.restart')
+    onChangeDifficulty(elRestart)
 }
 
+// BONUS
+
+// Hints
 function onUseHint(elHint) {
     gGame.isHintStatus = true
     changeStyleValidCells()
-    // alert('Pick cell to show him and his neighbors!\n It is quikly')
 
     gGame.hints--
     elHint.remove()
@@ -266,6 +288,8 @@ function backToRegularMode() {
     }
 }
 
+
+// Safe Click
 function markSafeCell() {
     if (gGame.safeClicks === 0) return
     gGame.safeClicks--
@@ -277,12 +301,12 @@ function markSafeCell() {
 
     var elCell = document.querySelector(`.cell-${rndPos.i}-${rndPos.j}`)
     elCell.classList.add('hint-valid-cell')
-    
+
     setTimeout(() => {
         elCell.classList.remove('hint-valid-cell')
     }, 2000);
-    
-    
+
+
     var elSpanText = document.querySelector('.safe-container span')
     elSpanText.innerText = `${gGame.safeClicks} clicks available`
 }
@@ -294,9 +318,70 @@ function getSafeCells() {
             if (gBoard[i][j].isShown) continue
             if (gBoard[i][j].isMine) continue
 
-            safeCells.push({i, j})
+            safeCells.push({ i, j })
         }
     }
 
     return safeCells
+}
+
+
+// Exterminator - Mine Detector
+function removeMines() {
+    var rangeStop = gLevel.SIZE > 10 ? gLevel.SIZE * 2 : gLevel.SIZE + 1
+    if (gGame.markedCount < rangeStop) return
+    var mines = getMines()
+
+    for (var i = 0; i < 3; i++) {
+        var rndIdx = getRandomIntInclusive(0, mines.length - 1)
+        var rndPos = mines[rndIdx]
+        mines.splice(rndIdx, 1)
+
+        // MODEL
+        var currCell = gBoard[rndPos.i][rndPos.j].isMine
+        currCell = false
+        if (currCell.isMarked) currCell.isMarked = false
+        gBoard[rndPos.i][rndPos.j].isMine = false
+        gLevel.MINES--
+
+        // DOM
+        var elCell = document.querySelector(`.cell-${rndPos.i}-${rndPos.j}`)
+        elCell.innerText = ''
+    }
+
+    gGame.markedCount -= 3
+    document.querySelector('.marked').innerText = gGame.markedCount
+
+    resetMinesNegsCount()
+    setMinesNegsCount()
+    resetBoardCountNegs()
+}
+
+function getMines() {
+    var mines = []
+
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+            if (gBoard[i][j].isShown) continue
+            if (gBoard[i][j].isMine) {
+                mines.push({ i, j })
+            }
+        }
+    }
+
+    return mines
+}
+
+function resetBoardCountNegs() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            var elCell = document.querySelector(`.cell-${i}-${j}`)
+            var currCell = gBoard[i][j]
+            if (currCell.isMine) continue
+            if (!currCell.isShown) continue
+
+            elCell.innerText = ''
+            elCell.innerText = currCell.minesAroundCount === 0 ? '' : currCell.minesAroundCount
+        }
+    }
 }

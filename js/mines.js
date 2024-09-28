@@ -49,3 +49,12 @@ function updateNeighborCount(iPos, jPos) {
     }
 }
 
+function resetMinesNegsCount() {
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[i].length; j++) {
+            var currCell = gBoard[i][j]
+
+            currCell.minesAroundCount = 0
+        }
+    }
+}

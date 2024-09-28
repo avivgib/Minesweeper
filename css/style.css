@@ -1,5 +1,5 @@
 body {
-    background-image: url('../img/background1.png');
+    background-image: url('../img/background.png');
     margin: 0 auto;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -12,6 +12,12 @@ body {
 body.dark-mode {
     background-image: url('../img/dark-mode.jpg');
     color: white;
+}
+
+.exterminator {
+    width: 140px;
+    height: 140px;
+    cursor: pointer;
 }
 
 .modes-container {
@@ -159,6 +165,14 @@ td.selected {
     text-decoration: none;
 }
 
+.mine-detector-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
 .res-msg {
     text-align: center;
 }
@@ -205,4 +219,8 @@ td.selected {
 
 .hint-valid-cell {
     background-color: lightgreen;
+}
+
+.hidden {
+    display: none;
 }
