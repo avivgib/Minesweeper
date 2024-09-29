@@ -14,7 +14,7 @@ body.dark-mode {
     color: white;
 }
 
-.exterminator {
+.mine-detector {
     width: 140px;
     height: 140px;
     cursor: pointer;
@@ -36,30 +36,6 @@ img.mine {
 h1 {
     text-align: center;
 }
-
-/* .card-container {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    width: max-content;
-    height: inherit;
-    background-color: rgb(74, 77, 83);
-    margin: auto;
-
-    
-    box-shadow: inset 0px 1px 0px 0px #fce2c1;
-    background: linear-gradient(to bottom, #f7f6f4 5%, #040301 100%);
-    border-radius: 11px;
-    border: 2px solid #c5c5c5;
-    cursor: pointer;
-    color: #010101;
-    font-family: Arial;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 8px 18px;
-    text-decoration: none;
-} */
-
 
 .timer-container {
     display: table;
@@ -107,7 +83,7 @@ tr:last-child td:last-child {
 }
 
 td.selected {
-    background-color: white;
+    background-color: lightblue;
     font-style: italic;
     color: darkslategray;
     opacity: 0.85;
@@ -123,13 +99,14 @@ td.selected {
     width: 40px;
     height: 40px;
     background-color: transparent;
-    border: none; 
+    border: none;
 }
 
 .hint img {
     width: 100%;
     height: 100%;
-    background-color: transparent; /* Ensure the image background is transparent */
+    background-color: transparent;
+    /* Ensure the image background is transparent */
 }
 
 /* .helpers-container{
@@ -139,7 +116,7 @@ td.selected {
     margin: 0 auto;
     max-width: 1148px;
 } */
- 
+
 .safe-container {
     display: flex;
     flex-direction: column;
@@ -224,3 +201,32 @@ td.selected {
 .hidden {
     display: none;
 }
+
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+}
+
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 140px;
+    background-color: black;
+    color: #fff;
+    border-radius: 5px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+

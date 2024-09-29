@@ -30,6 +30,14 @@ function padTime(val) {
 function updateBestTime() {
     const currBetTime = Number(gBestTime)
     if (gGame.secsPassed < currBetTime || isNaN(currBetTime)) {
+        if (gLevel.SIZE === 4) {
+            localStorage.setItem('beginnerBestTime', gGame.secsPassed)
+        } else if (gLevel.SIZE === 8) {
+            localStorage.setItem('mediumBestTime', gGame.secsPassed)
+        } else if (gLevel.SIZE === 12) {
+            localStorage.setItem('expertBestTime', gGame.secsPassed)
+        }
+
         gBestTime = formatTime(gGame.secsPassed * 1000)
         document.querySelector('.best-time').innerText = gBestTime
     }

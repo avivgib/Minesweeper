@@ -3,13 +3,24 @@
 const FLAG_IMG = '<img class="flag" src="img/flag.png">'
 const MINE_IMG = '<img class="mine" src="img/mine.png">'
 const HINT_IMG = '<img class="hint" onclick="onUseHint(this)" src="img/hint.png">'
-const MINE_DETECTOR_IMG = '<img class="exterminator" onclick="removeMines(this)" src="img/metal-detector.png">'
+const MINE_DETECTOR_IMG = '<img class="mine-detector" onclick="removeMines(this)" src="img/metal-detector.png">'
 const TIMER_INTERVAL = 1000
 const INITIAL_TIMER_TEXT = '000'
 
 var gBestTime = '999'
+if (!localStorage.getItem('beginnerBestTime')) {
+    localStorage.setItem('beginnerBestTime', gBestTime)
+}
+if (!localStorage.getItem('mediumBestTime')) {
+    localStorage.setItem('mediumBestTime', gBestTime)
+}
+if (!localStorage.getItem('expertBestTime')) {
+    localStorage.setItem('expertBestTime', gBestTime)
+}
+
 var gTimerIntrval // holds the interval
 var gStartTime // holds the start timer
+var touchTimeout // for mark cells in touch screen
 
 var gBoard
 var gLevel = {
@@ -51,6 +62,16 @@ function resetData() {
     document.querySelector('.restart').innerText = '😁'
     document.querySelector('.res-msg').innerText = ''
 
+    // BEST TIME
+    if (gLevel.SIZE === 4) {
+        gBestTime = localStorage.getItem('beginnerBestTime')
+    } else if (gLevel.SIZE === 8) {
+        gBestTime = localStorage.getItem('mediumBestTime')
+    } else if (gLevel.SIZE === 12) {
+        gBestTime = localStorage.getItem('expertBestTime')
+    }
+    document.querySelector('.best-time').innerText = gBestTime === '999' ? '000' : padTime(gBestTime)
+
     // LIVES
     var elLives = document.querySelector('.lives')
     elLives.innerHTML = ''
@@ -67,7 +88,7 @@ function resetData() {
 
     // MINE-DETECTOR
     var elMineDetectorContainer = document.querySelector('.mine-detector-container')
-    var elMineDetector = document.querySelector('.exterminator')
+    var elMineDetector = document.querySelector('.mine-detector')
 
     elMineDetectorContainer.classList.add('hidden')
 
@@ -130,6 +151,34 @@ function onCellClicked(elCell, i, j) {
     }
 }
 
+var onlongtouch;
+var timer;
+var touchduration = 800; //length of time we want the user to touch before we do something
+
+function touchstart(e) {
+    e.preventDefault()
+    if (!timer) {
+        timer = setTimeout(onlongtouch, touchduration)
+    }
+}
+
+function touchend() {
+    if (timer) {
+        clearTimeout(timer)
+        timer = null
+    }
+}
+
+onlongtouch = function () {
+    timer = null
+    document.querySelector('ping').innerText += 'ping\n'
+};
+
+document.addEventListener("DOMContentLoaded", function (event) {
+    window.addEventListener("touchstart", touchstart, false);
+    window.addEventListener("touchend", touchend, false);
+});
+
 // Right Click Handler
 function onCellMarked(ev, elCell, i, j) {
     ev.preventDefault()
@@ -146,6 +195,16 @@ function onCellMarked(ev, elCell, i, j) {
     }
 
     document.querySelector('.marked').innerText = gGame.markedCount
+}
+
+function onTouchStart(event, elCell, i, j) {
+    touchTimeout = setTimeout(() => {
+        onCellMarked(event, elCell, i, j)
+    }, 500);
+}
+
+function onTouchEnd() {
+    clearTimeout(touchTimeout)
 }
 
 function checkGameOver(elCell, i, j) {
@@ -188,42 +247,42 @@ function checkGameOver(elCell, i, j) {
     return elementToShow
 }
 
+function restartGame() {
+    var level
+    if (gLevel.SIZE === 4) level = 'beginner'
+    else if (gLevel.SIZE === 8) level = 'medium'
+    else if (gLevel.SIZE === 12) level = 'expert'
+
+    resetLevelData(level)
+    onInit()
+}
+
 function onChangeDifficulty(elBtn) {
-    if (elBtn.innerText === 'Beginner') {
-        gLevel.SIZE = 4
-        gLevel.MINES = 2
-        gLevel.LIVES = 1
-
-        gGame.hints = 0
-        gGame.safeClicks = 1
-    }
-    else if (elBtn.innerText === 'Medium') {
-        gLevel.SIZE = 8
-        gLevel.MINES = 14
-        gLevel.LIVES = 2
-
-        gGame.hints = 2
-        gGame.safeClicks = 2
-    }
-    else if (elBtn.innerText === 'Expert') {
-        gLevel.SIZE = 12
-        gLevel.MINES = 32
-        gLevel.LIVES = 3
-
-        gGame.hints = 3
-        gGame.safeClicks = 3
-    }
-
+    var level = elBtn.innerText.toLowerCase()
+    resetLevelData(level)
 
     var elBestTime = document.querySelector('.best-time')
     elBestTime.innerText = '000'
     onInit()
 }
 
-function restartGame() {
-    var elRestart = document.querySelector('.restart')
-    onChangeDifficulty(elRestart)
+function resetLevelData(level) {
+    var levels = {
+        beginner: { size: 4, mines: 2, lives: 1, hints: 0, safeClicks: 1 },
+        medium: { size: 8, mines: 14, lives: 2, hints: 2, safeClicks: 2 },
+        expert: { size: 12, mines: 32, lives: 3, hints: 3, safeClicks: 3 },
+    }
+
+    if (levels[level]) {
+        gLevel.SIZE = levels[level].size
+        gLevel.MINES = levels[level].mines
+        gLevel.LIVES = levels[level].lives
+
+        gGame.hints = levels[level].hints
+        gGame.safeClicks = levels[level].safeClicks
+    }
 }
+
 
 // BONUS
 
