@@ -152,33 +152,27 @@ function onCellClicked(elCell, i, j) {
     }
 }
 
-var onlongtouch;
-var timer;
-var touchduration = 800; //length of time we want the user to touch before we do something
-
-function touchstart(e) {
-    e.preventDefault()
-    if (!timer) {
-        timer = setTimeout(onlongtouch, touchduration)
+function onTouchStart(event, elCell, i, j) {
+    if (gBoard[i][j].isMarked) {
+        onCellMarked(event, elCell, i, j)
+        return
     }
+    event.preventDefault()
+    gIsLongPress = false
+
+    gTouchTimeout = setTimeout(() => {
+        onCellMarked(event, elCell, i, j)
+        gIsLongPress = true
+    }, 500);
 }
 
-function touchend() {
-    if (timer) {
-        clearTimeout(timer)
-        timer = null
+function onTouchEnd(event, elCell, i, j) {
+    clearTimeout(gTouchTimeout)
+    if (!gIsLongPress) {
+        onCellClicked(elCell, i, j)
     }
+    event.preventDefault()
 }
-
-onlongtouch = function () {
-    timer = null
-    document.querySelector('ping').innerText += 'ping\n'
-};
-
-document.addEventListener("DOMContentLoaded", function (event) {
-    window.addEventListener("touchstart", touchstart, false);
-    window.addEventListener("touchend", touchend, false);
-});
 
 // Right Click Handler
 function onCellMarked(ev, elCell, i, j) {
@@ -196,21 +190,6 @@ function onCellMarked(ev, elCell, i, j) {
     }
 
     document.querySelector('.marked').innerText = gGame.markedCount
-}
-
-function onTouchStart(event, elCell, i, j) {
-    gIsLongPress = false
-    gTouchTimeout = setTimeout(() => {
-        onCellMarked(event, elCell, i, j)
-        gIsLongPress = true
-    }, 500);
-}
-
-function onTouchEnd(event) {
-    clearTimeout(gTouchTimeout)
-    if (gIsLongPress) {
-        event.preventDefault()
-    }
 }
 
 function checkGameOver(elCell, i, j) {
