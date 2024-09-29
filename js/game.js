@@ -20,7 +20,8 @@ if (!localStorage.getItem('expertBestTime')) {
 
 var gTimerIntrval // holds the interval
 var gStartTime // holds the start timer
-var touchTimeout // for mark cells in touch screen
+var gTouchTimeout // for mark cells in touch screen
+var gIsLongPress = false
 
 var gBoard
 var gLevel = {
@@ -198,13 +199,18 @@ function onCellMarked(ev, elCell, i, j) {
 }
 
 function onTouchStart(event, elCell, i, j) {
-    touchTimeout = setTimeout(() => {
+    gIsLongPress = false
+    gTouchTimeout = setTimeout(() => {
         onCellMarked(event, elCell, i, j)
+        gIsLongPress = true
     }, 500);
 }
 
-function onTouchEnd() {
-    clearTimeout(touchTimeout)
+function onTouchEnd(event) {
+    clearTimeout(gTouchTimeout)
+    if (gIsLongPress) {
+        event.preventDefault()
+    }
 }
 
 function checkGameOver(elCell, i, j) {

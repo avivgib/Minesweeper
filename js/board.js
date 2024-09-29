@@ -32,7 +32,7 @@ function renderBoard() {
                             onclick="onCellClicked(this, ${i}, ${j})" 
                             oncontextmenu="onCellMarked(event, this, ${i}, ${j})" 
                             ontouchstart="onTouchStart(event, this, ${i}, ${j})" 
-                            ontouchend="onTouchEnd()">
+                            ontouchend="onTouchEnd(event, this, ${i}, ${j})">
                         </td>`
         }
 
