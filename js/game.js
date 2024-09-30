@@ -247,7 +247,7 @@ function checkGameOver(elCell, i, j) {
             var audio = new Audio("sound/failure_trombone.mp3");
             audio.play();
             document.querySelector('.restart').innerText = '🤯'
-            document.querySelector('.res-msg').innerText = 'YOU LOSE!'
+            document.querySelector('.res-msg').innerText = 'YOU LOST!'
             clearInterval(gTimerIntrval)
             elementToShow = MINE_IMG
             gGame.isOn = false
@@ -259,7 +259,7 @@ function checkGameOver(elCell, i, j) {
         var audio = new Audio("sound/win_game.mp3");
         audio.play();
         document.querySelector('.restart').innerText = '😎'
-        document.querySelector('.res-msg').innerText = 'YOU WIN!'
+        document.querySelector('.res-msg').innerText = 'YOU WON!'
         clearInterval(gTimerIntrval)
         gGame.isOn = false
         updateBestTime()
