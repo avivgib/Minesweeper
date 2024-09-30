@@ -203,11 +203,15 @@ function checkGameOver(elCell, i, j) {
         if (gLevel.LIVES > 0) {
             gLevel.LIVES--
 
+            var audio = new Audio("sound/mine.mp3");
+            audio.play();
             var elLives = document.querySelector('.lives').innerText
             var livesCount = elLives.replace('💝', '');
             elementToShow = MINE_IMG
             document.querySelector('.lives').innerText = livesCount
         } else {
+            var audio = new Audio("sound/failure_trombone.mp3");
+            audio.play();
             document.querySelector('.restart').innerText = '🤯'
             document.querySelector('.res-msg').innerText = 'YOU LOSE!'
             clearInterval(gTimerIntrval)
@@ -218,6 +222,8 @@ function checkGameOver(elCell, i, j) {
     }
     // Mine - Game Over - Win
     else if (gGame.showCount === (gLevel.SIZE ** 2) - gLevel.MINES - 1) {
+        var audio = new Audio("sound/win_game.mp3");
+        audio.play();
         document.querySelector('.restart').innerText = '😎'
         document.querySelector('.res-msg').innerText = 'YOU WIN!'
         clearInterval(gTimerIntrval)
