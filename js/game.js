@@ -45,24 +45,37 @@ function onInit() {
     resetTimer()
     gBoard = buildBoard()
     renderBoard()
-    resetData()
+    resetGameState()
 }
 
-function resetData() {
+function resetGameState() {
+    resetGameModel()
+    resetGameUI()
+    resetBestTime()
+    resetLives()
+    resetHints()
+    resetMineDetector()
+}
+
+function resetGameModel() {
     // MODEL
     gGame.isOn = false
     gGame.isFirstStep = true
     gGame.isHintStatus = false
     gGame.markedCount = gLevel.MINES
     gGame.showCount = 0
+}
 
+function resetGameUI() {
     // DOM
     document.querySelector('.safe-container span').innerText = `${gGame.safeClicks} clicks available`
     document.querySelector('.marked').innerText = gGame.markedCount
     document.querySelector('.exposed').innerText = gGame.showCount
     document.querySelector('.restart').innerText = '😁'
     document.querySelector('.res-msg').innerText = ''
+}
 
+function resetBestTime() {
     // BEST TIME
     if (gLevel.SIZE === 4) {
         gBestTime = localStorage.getItem('beginnerBestTime')
@@ -72,21 +85,27 @@ function resetData() {
         gBestTime = localStorage.getItem('expertBestTime')
     }
     document.querySelector('.best-time').innerText = gBestTime === '999' ? '000' : padTime(gBestTime)
+}
 
+function resetLives() {
     // LIVES
     var elLives = document.querySelector('.lives')
     elLives.innerHTML = ''
     for (var i = 0; i < gLevel.LIVES; i++) {
         elLives.innerHTML += '💝'
     }
+}
 
+function resetHints() {
     // HINTS
     var elHintsContainer = document.querySelector('.hints')
     elHintsContainer.innerHTML = ''
     for (var i = 0; i < gGame.hints; i++) {
         elHintsContainer.innerHTML += HINT_IMG
     }
+}
 
+function resetMineDetector() {
     // MINE-DETECTOR
     var elMineDetectorContainer = document.querySelector('.mine-detector-container')
     var elMineDetector = document.querySelector('.mine-detector')
@@ -101,55 +120,70 @@ function resetData() {
 
 function onCellClicked(elCell, i, j) {
     if (gGame.isFirstStep) {
-        startTimer()
-        gGame.isFirstStep = false
-        gGame.isOn = true
-        buildMines(i, j)
-        setMinesNegsCount()
+        processFirstClick(i, j)
     }
 
     if (gGame.isHintStatus) {
-        var negsAndSelf = getNegsWithSelf(i, j)
-
-        for (var k = 0; k < negsAndSelf.length; k++) {
-            var currPos = negsAndSelf[k]
-            var currCell = gBoard[currPos.i][currPos.j]
-            var elCell = document.querySelector(`.cell-${currPos.i}-${currPos.j}`)
-
-            elCell.classList.add('selected')
-            if (currCell.isMine) {
-                elCell.innerHTML = MINE_IMG
-            } else {
-                elCell.innerText = currCell.minesAroundCount === 0 ? '' : currCell.minesAroundCount
-            }
-        }
-
-        setTimeout(() => {
-            hiddenNegsWithSelf(negsAndSelf)
-        }, 1000);
-
-        setTimeout(() => {
-            backToRegularMode()
-        }, 1000);
-
-        gGame.isHintStatus = false
+        revealHintCells(i, j)
     } else {
-        var currCell = gBoard[i][j]
-        if (!gGame.isOn || currCell.isMarked || currCell.isShown) return
-
-        currCell.isShown = true
-
-        // Recursion - 0
-        if (currCell.minesAroundCount === 0 && !currCell.isMine) {
-            expandShown(elCell, i, j)
-        }
-        var elementToShow = checkGameOver(elCell, i, j)
-
-
-        elCell.innerHTML = elementToShow === 0 ? '' : elementToShow
-        elCell.classList.add('selected')
-        document.querySelector('.exposed').innerText = gGame.showCount
+        processRegularClick(elCell, i, j)
     }
+}
+
+function processFirstClick(i, j) {
+    startTimer()
+    gGame.isFirstStep = false
+    gGame.isOn = true
+    buildMines(i, j)
+    setMinesNegsCount()
+}
+
+function revealHintCells(i, j) {
+    var negsAndSelf = getNegsWithSelf(i, j)
+    showHintedCells(negsAndSelf)
+
+    setTimeout(() => {
+        hiddenNegsWithSelf(negsAndSelf)
+    }, 1000);
+
+    setTimeout(() => {
+        backToRegularMode()
+    }, 1000);
+
+    gGame.isHintStatus = false
+}
+
+function showHintedCells(negsAndSelf) {
+    for (var k = 0; k < negsAndSelf.length; k++) {
+        var currPos = negsAndSelf[k]
+        var currCell = gBoard[currPos.i][currPos.j]
+        var elCell = document.querySelector(`.cell-${currPos.i}-${currPos.j}`)
+
+        elCell.classList.add('selected')
+        if (currCell.isMine) {
+            elCell.innerHTML = MINE_IMG
+        } else {
+            elCell.innerText = currCell.minesAroundCount === 0 ? '' : currCell.minesAroundCount
+        }
+    }
+}
+
+function processRegularClick(elCell, i, j) {
+    var currCell = gBoard[i][j]
+    if (!gGame.isOn || currCell.isMarked || currCell.isShown) return
+
+    currCell.isShown = true
+
+    // Recursion - 0
+    if (currCell.minesAroundCount === 0 && !currCell.isMine) {
+        expandShown(elCell, i, j)
+    }
+    var elementToShow = checkGameOver(elCell, i, j)
+
+
+    elCell.innerHTML = elementToShow === 0 ? '' : elementToShow
+    elCell.classList.add('selected')
+    document.querySelector('.exposed').innerText = gGame.showCount
 }
 
 function onTouchStart(event, elCell, i, j) {
